@@ -70,7 +70,57 @@ def next_turn(snake, food):
 
 	snake.coordinates.insert(0, (x, y)) 
 
-	
+	# Create snake's head and add one eye
+	square = canvas.create_rectangle( 
+		x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE) 
+
+	snake.squares.insert(0, square)
+
+	# Add a single eye to the snake's head
+	draw_eye(x, y, direction)
+
+	if x == food.coordinates[0] and y == food.coordinates[1]: 
+
+		global score 
+
+		score += 1
+
+		label.config(text="Points:{}".format(score)) 
+
+		canvas.delete("food") 
+
+		food = Food() 
+
+	else: 
+
+		del snake.coordinates[-1] 
+
+		canvas.delete(snake.squares[-1]) 
+
+		del snake.squares[-1] 
+
+	if check_collisions(snake): 
+		game_over() 
+
+	else: 
+		window.after(SPEED, next_turn, snake, food) 
+
+def change_direction(new_direction): 
+
+	global direction 
+
+	if new_direction == 'left': 
+		if direction != 'right': 
+			direction = new_direction 
+	elif new_direction == 'right': 
+		if direction != 'left': 
+			direction = new_direction 
+	elif new_direction == 'up': 
+		if direction != 'down': 
+			direction = new_direction 
+	elif new_direction == 'down': 
+		if direction != 'up': 
+			direction = new_direction 
  
 def check_collisions(snake): 
 
@@ -96,10 +146,37 @@ def game_over():
 					text="GAME OVER", 
 					fill="white", tag="gameover") 
 
+# Function to draw a single eye on the snake's head
+def draw_eye(x, y, direction):
+    # Remove any previous eye
+    canvas.delete("eye")
+    
+    eye_offset = 5
+    eye_size = 3
+    
+    # Draw a single eye in a fixed position on the head based on direction
+    if direction == 'up':
+        eye_x1, eye_y1 = x + SPACE_SIZE - eye_offset, y + eye_offset
+    elif direction == 'down':
+        eye_x1, eye_y1 = x + eye_offset, y + SPACE_SIZE - eye_offset
+    elif direction == 'left':
+        eye_x1, eye_y1 = x + eye_offset, y + eye_offset
+    elif direction == 'right':
+        eye_x1, eye_y1 = x + SPACE_SIZE - eye_offset, y + eye_offset
+    
+    # Draw the single eye as a small circle
+    canvas.create_oval(eye_x1, eye_y1, eye_x1 + eye_size, eye_y1 + eye_size, fill=EYE_COLOR, tag="eye")
+
+# Function to draw a grid in the background
+# def draw_grid():
+#     for x in range(0, WIDTH, SPACE_SIZE):
+#         canvas.create_line(x, 0, x, HEIGHT, fill=GRID_COLOR)
+#     for y in range(0, HEIGHT, SPACE_SIZE):
+#         canvas.create_line(0, y, WIDTH, y, fill=GRID_COLOR)
 
 
 window = Tk() 
- 
+window.title("Snake Game") 
 
 score = 0
 direction = 'down'
@@ -138,7 +215,8 @@ window.bind('<Down>',
 snake = Snake() 
 food = Food() 
 
-
+# Draw the grid before starting the game
+# draw_grid()
 
 next_turn(snake, food) 
 
