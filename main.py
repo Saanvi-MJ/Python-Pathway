@@ -165,11 +165,11 @@ def draw_eye(x, y, direction):
     
     canvas.create_oval(eye_x1, eye_y1, eye_x1 + eye_size, eye_y1 + eye_size, fill=EYE_COLOR, tag="eye")
 
-def draw_grid():
-    for x in range(0, WIDTH, SPACE_SIZE):
-        canvas.create_line(x, 0, x, HEIGHT, fill=GRID_COLOR)
-    for y in range(0, HEIGHT, SPACE_SIZE):
-        canvas.create_line(0, y, WIDTH, y, fill=GRID_COLOR)
+# def draw_grid():
+#     for x in range(0, WIDTH, SPACE_SIZE):
+#         canvas.create_line(x, 0, x, HEIGHT, fill=GRID_COLOR)
+#     for y in range(0, HEIGHT, SPACE_SIZE):
+#         canvas.create_line(0, y, WIDTH, y, fill=GRID_COLOR)
 
 
 window = Tk() 
@@ -212,7 +212,7 @@ window.bind('<Down>',
 snake = Snake() 
 food = Food() 
 
-draw_grid()
+# draw_grid()
 
 next_turn(snake, food) 
 
