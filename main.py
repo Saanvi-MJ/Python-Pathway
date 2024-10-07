@@ -173,7 +173,7 @@ def draw_grid():
 
 
 window = Tk() 
-window.title("Snake Game") 
+window.title("Welcome to Snake Game") 
 
 score = 0
 direction = 'down'
@@ -212,8 +212,8 @@ window.bind('<Down>',
 snake = Snake() 
 food = Food() 
 
-# Draw the grid before starting the game
-# draw_grid()
+
+draw_grid()
 
 next_turn(snake, food) 
 
