@@ -146,9 +146,7 @@ def game_over():
 					text="GAME OVER", 
 					fill="white", tag="gameover") 
 
-# Function to draw a single eye on the snake's head
 def draw_eye(x, y, direction):
-    # Remove any previous eye
     canvas.delete("eye")
     
     eye_offset = 5
@@ -164,15 +162,14 @@ def draw_eye(x, y, direction):
     elif direction == 'right':
         eye_x1, eye_y1 = x + SPACE_SIZE - eye_offset, y + eye_offset
     
-    # Draw the single eye as a small circle
+    
     canvas.create_oval(eye_x1, eye_y1, eye_x1 + eye_size, eye_y1 + eye_size, fill=EYE_COLOR, tag="eye")
 
-# Function to draw a grid in the background
-# def draw_grid():
-#     for x in range(0, WIDTH, SPACE_SIZE):
-#         canvas.create_line(x, 0, x, HEIGHT, fill=GRID_COLOR)
-#     for y in range(0, HEIGHT, SPACE_SIZE):
-#         canvas.create_line(0, y, WIDTH, y, fill=GRID_COLOR)
+def draw_grid():
+    for x in range(0, WIDTH, SPACE_SIZE):
+        canvas.create_line(x, 0, x, HEIGHT, fill=GRID_COLOR)
+    for y in range(0, HEIGHT, SPACE_SIZE):
+        canvas.create_line(0, y, WIDTH, y, fill=GRID_COLOR)
 
 
 window = Tk() 
