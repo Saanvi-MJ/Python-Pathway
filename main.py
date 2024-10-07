@@ -34,7 +34,8 @@ class Snake:
 			self.coordinates.append([0, 0]) 
 
 		for x, y in self.coordinates: 
-			square = canvas.create_rectangle( 
+			# Changing from rectangle to oval for circular body segments
+			square = canvas.create_oval( 
 				x, y, x + SPACE_SIZE, y + SPACE_SIZE, 
 			fill=SNAKE, tag="snake") 
 			self.squares.append(square) 
@@ -70,13 +71,12 @@ def next_turn(snake, food):
 
 	snake.coordinates.insert(0, (x, y)) 
 
-	# Create snake's head and add one eye
-	square = canvas.create_rectangle( 
+	# Changing from rectangle to oval for circular body segments
+	square = canvas.create_oval( 
 		x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE) 
 
 	snake.squares.insert(0, square)
 
-	# Add a single eye to the snake's head
 	draw_eye(x, y, direction)
 
 	if x == food.coordinates[0] and y == food.coordinates[1]: 
@@ -122,6 +122,7 @@ def change_direction(new_direction):
 		if direction != 'up': 
 			direction = new_direction 
  
+
 def check_collisions(snake): 
 
 	x, y = snake.coordinates[0] 
@@ -161,7 +162,6 @@ def draw_eye(x, y, direction):
         eye_x1, eye_y1 = x + eye_offset, y + eye_offset
     elif direction == 'right':
         eye_x1, eye_y1 = x + SPACE_SIZE - eye_offset, y + eye_offset
-    
     
     canvas.create_oval(eye_x1, eye_y1, eye_x1 + eye_size, eye_y1 + eye_size, fill=EYE_COLOR, tag="eye")
 
@@ -212,9 +212,8 @@ window.bind('<Down>',
 snake = Snake() 
 food = Food() 
 
-
 draw_grid()
 
 next_turn(snake, food) 
 
-window.mainloop()
+window.mainloop() 
