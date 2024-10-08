@@ -130,7 +130,7 @@ def game_over():
     canvas.delete(ALL)
     canvas.create_text(
         canvas.winfo_width()/2,
-        canvas.winfo_height()/2 - 40,
+        canvas.winfo_height()/2 - 70,
         font=('consolas', 70),
         text="GAME OVER",
         fill="white",
@@ -140,15 +140,23 @@ def game_over():
     canvas.create_text(
         canvas.winfo_width()/2,
         canvas.winfo_height()/2 + 40,
-        font=('consolas', 30),
+        font=('consolas', 25),
         text=f"Your Score: {score}",
         fill="white",
-        tag="score"
+        tag="score",
+    )
+    canvas.create_text(
+        canvas.winfo_width()/2,
+        canvas.winfo_height()/2 + 3,
+        font=('consolas', 20),
+        text=f"Maximum Score: {max_score}",
+        fill="white",
+        tag="score",
     )
 
     # Clear the points label
     label.config(text="")
-    max_score_label.config(text="Max Score: {}".format(max_score))
+    # max_score_label.config(text="Max Score: {}".format(max_score))
 
     # If the player beats the maximum score, trigger congratulations and confetti
     if score == max_score:
@@ -187,8 +195,9 @@ def show_congratulations():
     canvas.create_text(
         canvas.winfo_width()/2,
         canvas.winfo_height()/2 + 100,
-        font=('consolas', 30),
-        text="Congratulations! New High Score!",
+        font=('consolas', 20),
+        text="Congratulations on setting a \n new high score !",
+        anchor='center', 
         fill="yellow",
         tag="congratulations"
     )
