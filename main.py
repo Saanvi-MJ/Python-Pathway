@@ -158,9 +158,12 @@ def game_over():
         tag="score"
     )
 
+    # Clear the points label
+    label.config(text="")
+
+
 # Function to draw a single eye on the snake's head
 def draw_eye(x, y, direction):
-    # Remove any previous eye
     canvas.delete("eye")
     
     eye_offset = 5
