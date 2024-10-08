@@ -12,7 +12,7 @@ SPACE_SIZE = 20
 # Initialising body's length of the snake 
 BODY_SIZE = 2
 # Initialising color of the snake 
-SNAKE = "#00FF00"
+SNAKE = "#f0ece0"
 # Initialising colour of the food 
 FOOD = "#FFFFFF"
 # Initialising colour of the background 
@@ -138,13 +138,25 @@ def check_collisions(snake):
 	return False
 
 def game_over(): 
-
-	canvas.delete(ALL) 
-	canvas.create_text(canvas.winfo_width()/2, 
-					canvas.winfo_height()/2, 
-					font=('consolas', 70), 
-					text="GAME OVER", 
-					fill="white", tag="gameover") 
+    canvas.delete(ALL) 
+    canvas.create_text(
+        canvas.winfo_width()/2, 
+        canvas.winfo_height()/2 - 40, 
+        font=('consolas', 70), 
+        text="GAME OVER", 
+        fill="white", 
+        tag="gameover"
+    )
+    
+    # Display the final score below the "GAME OVER" message
+    canvas.create_text(
+        canvas.winfo_width()/2, 
+        canvas.winfo_height()/2 + 40, 
+        font=('consolas', 30), 
+        text=f"Your Score is: {score}", 
+        fill="white", 
+        tag="score"
+    )
 
 # Function to draw a single eye on the snake's head
 def draw_eye(x, y, direction):
@@ -176,7 +188,7 @@ def draw_grid():
 
 
 window = Tk() 
-window.title("Snake Game") 
+window.title("Welcome to Snake Game") 
 
 score = 0
 direction = 'down'
@@ -211,6 +223,8 @@ window.bind('<Up>',
 			lambda event: change_direction('up')) 
 window.bind('<Down>', 
 			lambda event: change_direction('down')) 
+
+
 
 snake = Snake() 
 food = Food() 
