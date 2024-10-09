@@ -1,6 +1,7 @@
 from tkinter import *
 import random
 import os
+from PIL import Image, ImageTk
 
 # Initializing screen dimensions, speed, snake size, and colors
 WIDTH = 500
@@ -66,30 +67,20 @@ def next_turn(snake, food):
 
     snake.coordinates.insert(0, (x, y))
 
-    # Create snake's head and add one eye
     square = canvas.create_rectangle(
         x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE)
 
     snake.squares.insert(0, square)
 
-    # Add a single eye to the snake's head
     draw_eye(x, y, direction)
 
-    global score, max_score
+    global score
 
     if x == food.coordinates[0] and y == food.coordinates[1]:
         score += 1
-
-        if score > max_score:
-            max_score = score
-            save_max_score(max_score)
-            max_score_label.config(text="Max Score: {}".format(max_score))
-
         label.config(text="Points: {}".format(score))
-
         canvas.delete("food")
         food = Food()
-
     else:
         del snake.coordinates[-1]
         canvas.delete(snake.squares[-1])
@@ -97,7 +88,6 @@ def next_turn(snake, food):
 
     if check_collisions(snake):
         game_over()
-
     else:
         window.after(SPEED, next_turn, snake, food)
 
@@ -126,13 +116,15 @@ def check_collisions(snake):
     return False
 
 def game_over():
+    global max_score
+
     canvas.delete(ALL)
     canvas.create_text(
         canvas.winfo_width()/2,
         canvas.winfo_height()/2 - 70,
         font=('consolas', 70),
         text="GAME OVER",
-        fill="white",
+        fill="#fc5d18",
         tag="gameover"
     )
 
@@ -144,6 +136,13 @@ def game_over():
         fill="white",
         tag="score",
     )
+
+    # If the score exceeds max_score, update max_score and save it
+    if score > max_score:
+        max_score = score
+        save_max_score(max_score)
+    
+    # Display the final maximum score
     canvas.create_text(
         canvas.winfo_width()/2,
         canvas.winfo_height()/2 + 5,
@@ -153,41 +152,12 @@ def game_over():
         tag="score",
     )
 
-    # Clear the points label
     label.config(text="")
     max_score_label.config(text="")
 
-    # If the player beats the maximum score, trigger congratulations and confetti
-    if score > max_score and max_score!=0:
-        window.after(500, show_congratulations)  # Delay before showing congratulations
-        window.after(500, trigger_confetti)      # Start the confetti effect
-
-# Function to trigger a confetti effect with motion
-def trigger_confetti():
-    confetti_pieces = []
-
-    # Create 100 pieces of confetti at random positions with random colors
-    for _ in range(100):
-        x = random.randint(0, WIDTH)
-        y = random.randint(0, HEIGHT)
-        size = random.randint(5, 10)  # Random size for the confetti pieces
-        confetti = canvas.create_oval(x, y, x + size, y + size, fill=random_color(), tag="confetti")
-        confetti_pieces.append(confetti)
-
-    # Animate the confetti falling downwards
-    def move_confetti():
-        for confetti in confetti_pieces:
-            x1, y1, x2, y2 = canvas.coords(confetti)
-            canvas.move(confetti, 0, random.randint(5, 10))  # Move downwards
-
-            # Reset confetti to top if it goes off-screen
-            if y2 > HEIGHT:
-                canvas.coords(confetti, x1, 0, x2, size)
-
-        # Continue moving the confetti pieces
-        window.after(50, move_confetti)
-
-    move_confetti()
+    if score == max_score and max_score != 0:
+        window.after(500, show_congratulations)
+        
 
 # Function to show congratulations message after game over
 def show_congratulations():
@@ -197,7 +167,7 @@ def show_congratulations():
         font=('consolas', 17),
         text="Congratulations on setting a \n new high score!",
         anchor='center', 
-        fill="yellow",
+        fill="#75ab22",
         tag="congratulations"
     )
 
@@ -223,35 +193,45 @@ def draw_eye(x, y, direction):
 
     canvas.create_oval(eye_x1, eye_y1, eye_x1 + eye_size, eye_y1 + eye_size, fill=EYE_COLOR, tag="eye")
 
-
 # Function to display a separate "Get Ready" screen
 def show_get_ready_screen():
     canvas.delete(ALL)  # Clear the canvas
+
+    # Display "Get Ready" text
     canvas.create_text(
-        canvas.winfo_width()/2,
-        canvas.winfo_height()/2 +70,
+        canvas.winfo_width()/2 -5,
+        canvas.winfo_height()/2 + 70,
         font=('consolas', 50),
         text="Get Ready",
-        fill="white",
+        fill="#bcd70c",
         tag="get_ready"
     )
-    window.after(2000, start_game)  # Start game after 2 seconds
-    # canvas.delete(ALL)  # Clear the canvas
-    canvas.create_text(
+
+    # Load the logo image using Pillow, resize it, and convert it to Tkinter format
+    original_logo = Image.open("snakelogo.png")
+    resized_logo = original_logo.resize((120, 120))  # Resize the image to 100x100 pixels
+    logo_image = ImageTk.PhotoImage(resized_logo)
+
+    # Display the resized logo image
+    canvas.create_image(
         canvas.winfo_width()/2,
         canvas.winfo_height()/2,
-        font=('consolas', 50),
-        text="GO",
-        fill="white",
-        tag="go_lang"
+        image=logo_image,
+        anchor=CENTER,
+        tag="logo_image"
     )
+
+    # Keep the image reference to avoid garbage collection
+    canvas.image = logo_image
+    window.after(2000, start_game)
+
 # Function to start the game screen after "Get Ready"
 def start_game():
     canvas.delete("get_ready")  # Remove the "Get Ready" message
     global snake, food
     snake = Snake()  # Initialize the snake
     food = Food()  # Initialize the food
-    next_turn(snake, food)  #
+    next_turn(snake, food)  
 # Main Game Setup
 window = Tk()
 window.title("Snake Game")
