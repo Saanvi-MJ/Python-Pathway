@@ -53,6 +53,30 @@ class Food:
         canvas.create_oval(x, y, x + SPACE_SIZE, y +
                            SPACE_SIZE, fill=FOOD, tag="food")
 
+# Confetti class to manage the confetti effect
+class Confetti:
+    def __init__(self):
+        self.pieces = []
+        for _ in range(100):  # Create 100 confetti pieces
+            x = random.randint(0, WIDTH)
+            y = random.randint(-HEIGHT, -20)  # Start above the canvas
+            color = random_color()
+            piece = canvas.create_oval(x, y, x + 5, y + 5, fill=color, outline="")
+            self.pieces.append([piece, x, y])  # Store piece ID and its position
+
+    def fall(self):
+        for piece in self.pieces:
+            canvas.move(piece[0], 0, 2)  # Move down
+            piece[2] += 2  # Update Y position
+
+            # Reset the piece if it falls off the bottom of the canvas
+            if piece[2] > HEIGHT:
+                x = random.randint(0, WIDTH)
+                canvas.move(piece[0], x - piece[1], -HEIGHT)  # Move it back to the top
+                piece[1] = x  # Update X position
+
+        window.after(30, self.fall)  # Repeat the falling effect
+
 def next_turn(snake, food):
     x, y = snake.coordinates[0]
 
@@ -141,6 +165,7 @@ def game_over():
     if score > max_score:
         max_score = score
         save_max_score(max_score)
+        start_confetti()  # Start the confetti effect
     
     # Display the final maximum score
     canvas.create_text(
@@ -157,7 +182,11 @@ def game_over():
 
     if score == max_score and max_score != 0:
         window.after(500, show_congratulations)
-        
+
+# Function to start the confetti effect
+def start_confetti():
+    confetti = Confetti()  # Create confetti instance
+    confetti.fall()  # Start the falling effect
 
 # Function to show congratulations message after game over
 def show_congratulations():
@@ -232,6 +261,7 @@ def start_game():
     snake = Snake()  # Initialize the snake
     food = Food()  # Initialize the food
     next_turn(snake, food)  
+
 # Main Game Setup
 window = Tk()
 window.title("Snake Game")
