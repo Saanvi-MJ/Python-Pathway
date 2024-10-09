@@ -232,7 +232,7 @@ def draw_grid():
         canvas.create_line(0, y, WIDTH, y, fill=GRID_COLOR)
 
 window = Tk()
-window.title("Welcome to Snake Game")
+window.title("")
 
 score = 0
 max_score = load_max_score()  # Load max score from file
