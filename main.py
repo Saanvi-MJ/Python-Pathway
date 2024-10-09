@@ -159,7 +159,7 @@ def game_over():
     max_score_label.config(text="")
 
     # If the player beats the maximum score, trigger congratulations and confetti
-    if score == max_score and max_score !=0 :
+    if score > max_score and max_score!=0:
         window.after(500, show_congratulations)  # Delay before showing congratulations
         window.after(500, trigger_confetti)      # Start the confetti effect
 
@@ -196,7 +196,7 @@ def show_congratulations():
         canvas.winfo_width()/2,
         canvas.winfo_height()/2 + 100,
         font=('consolas', 17),
-        text="Congratulations on setting a \n new high score !",
+        text="Congratulations on setting a \n new high score!",
         anchor='center', 
         fill="yellow",
         tag="congratulations"
@@ -231,14 +231,46 @@ def draw_grid():
     for y in range(0, HEIGHT, SPACE_SIZE):
         canvas.create_line(0, y, WIDTH, y, fill=GRID_COLOR)
 
+# Function to display a separate "Get Ready" screen
+def show_get_ready_screen():
+    canvas.delete(ALL)  # Clear the canvas
+    canvas.create_text(
+        canvas.winfo_width()/2,
+        canvas.winfo_height()/2 +70,
+        font=('consolas', 50),
+        text="Get Ready",
+        fill="white",
+        tag="get_ready"
+    )
+    window.after(2000, start_game)  # Start game after 2 seconds
+    # canvas.delete(ALL)  # Clear the canvas
+    canvas.create_text(
+        canvas.winfo_width()/2,
+        canvas.winfo_height()/2,
+        font=('consolas', 50),
+        text="GO",
+        fill="white",
+        tag="go_lang"
+    )
+# Function to start the game screen after "Get Ready"
+def start_game():
+    canvas.delete("get_ready")  # Remove the "Get Ready" message
+    draw_grid()  # Draw the grid
+    global snake, food
+    snake = Snake()  # Initialize the snake
+    food = Food()  # Initialize the food
+    next_turn(snake, food)  #
+# Main Game Setup
 window = Tk()
-window.title("")
+window.title("Snake Game")
+window.resizable(False, False)
 
 score = 0
-max_score = load_max_score()  # Load max score from file
+max_score = load_max_score()
+
 direction = 'down'
 
-label = Label(window, text="Points: {}".format(score), font=('consolas', 20))
+label = Label(window, text="Points: {}".format(score), font=('consolas', 15))
 label.pack()
 
 max_score_label = Label(window, text="Max Score: {}".format(max_score), font=('consolas', 15))
@@ -264,11 +296,7 @@ window.bind('<Right>', lambda event: change_direction('right'))
 window.bind('<Up>', lambda event: change_direction('up'))
 window.bind('<Down>', lambda event: change_direction('down'))
 
-snake = Snake()
-food = Food()
-
-draw_grid()
-
-next_turn(snake, food)
+# Show the "Get Ready" screen first
+show_get_ready_screen()
 
 window.mainloop()
