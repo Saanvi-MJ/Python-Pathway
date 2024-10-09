@@ -8,11 +8,10 @@ HEIGHT = 500
 SPEED = 200
 SPACE_SIZE = 20
 BODY_SIZE = 2
-SNAKE = "#f0ece0"
-FOOD = "#FFFFFF"
-BACKGROUND = "#000000"
+SNAKE = "#75ab22"
+FOOD = "#fc5d18"
+BACKGROUND = "#010103"
 EYE_COLOR = "#000000"
-GRID_COLOR = "#444444"
 SCORE_FILE = "max_score.txt"  # File to store the maximum score
 
 # Function to load the maximum score from a file
@@ -224,12 +223,6 @@ def draw_eye(x, y, direction):
 
     canvas.create_oval(eye_x1, eye_y1, eye_x1 + eye_size, eye_y1 + eye_size, fill=EYE_COLOR, tag="eye")
 
-# Function to draw a grid in the background
-def draw_grid():
-    for x in range(0, WIDTH, SPACE_SIZE):
-        canvas.create_line(x, 0, x, HEIGHT, fill=GRID_COLOR)
-    for y in range(0, HEIGHT, SPACE_SIZE):
-        canvas.create_line(0, y, WIDTH, y, fill=GRID_COLOR)
 
 # Function to display a separate "Get Ready" screen
 def show_get_ready_screen():
@@ -255,7 +248,6 @@ def show_get_ready_screen():
 # Function to start the game screen after "Get Ready"
 def start_game():
     canvas.delete("get_ready")  # Remove the "Get Ready" message
-    draw_grid()  # Draw the grid
     global snake, food
     snake = Snake()  # Initialize the snake
     food = Food()  # Initialize the food
