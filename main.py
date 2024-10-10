@@ -98,11 +98,17 @@ def next_turn(snake, food):
 
     draw_eye(x, y, direction)
 
-    global score
+    global score, max_score
 
     if x == food.coordinates[0] and y == food.coordinates[1]:
         score += 1
         label.config(text="Points: {}".format(score))
+
+        # Update max score label if a new high score is achieved
+        if score > max_score:
+            max_score = score
+            max_score_label.config(text="Max Score: {}".format(max_score))
+
         canvas.delete("food")
         food = Food()
     else:
@@ -114,6 +120,7 @@ def next_turn(snake, food):
         game_over()
     else:
         window.after(SPEED, next_turn, snake, food)
+
 
 def change_direction(new_direction):
     global direction
