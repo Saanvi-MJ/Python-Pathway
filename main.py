@@ -145,7 +145,7 @@ def game_over():
     canvas.delete(ALL)
     canvas.create_text(
         canvas.winfo_width()/2,
-        canvas.winfo_height()/2 - 70,
+        canvas.winfo_height()/2 - 20,
         font=('consolas', 70),
         text="GAME OVER",
         fill="#fc5d18",
@@ -194,10 +194,20 @@ def display_scores():
             tag="congratulations"
         )
 
-        # Trigger confetti effect
+        # Trigger confetti effect 
         confetti = Confetti()
         confetti.fall()
+ # Add a "Play Again" button
+    play_again_button = Button(window, text="Play Again", font=('consolas', 20), command=restart_game)
+    play_again_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 200, window=play_again_button)
 
+# Function to restart the game
+def restart_game():
+    global score
+    score = 0
+    label.config(text="Points: {}".format(score))
+    canvas.delete(ALL)  # Clear the canvas
+    show_get_ready_screen()  # Show the "Get Ready" screen
 def random_color():
     return "#%06x" % random.randint(0, 0xFFFFFF)
 # Function to draw a single eye on the snake's head
@@ -253,10 +263,14 @@ def show_get_ready_screen():
 # Function to start the game screen after "Get Ready"
 def start_game():
     canvas.delete("get_ready")  # Remove the "Get Ready" message
-    global snake, food
-    snake = Snake()  # Initialize the snake
-    food = Food()  # Initialize the food
-    next_turn(snake, food)  
+    global snake, food, score, max_score, direction
+    score = 0
+    direction = "down"
+    snake = Snake()
+    food = Food()
+    next_turn(snake, food)
+    # Function to restart the game
+
 
 # Main Game Setup
 window = Tk()
@@ -294,7 +308,8 @@ window.bind('<Right>', lambda event: change_direction('right'))
 window.bind('<Up>', lambda event: change_direction('up'))
 window.bind('<Down>', lambda event: change_direction('down'))
 
-# Show the "Get Ready" screen first
+# Show the "Get Ready" screen when the game starts
 show_get_ready_screen()
+
 
 window.mainloop()
