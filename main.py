@@ -152,58 +152,54 @@ def game_over():
         tag="gameover"
     )
 
-    canvas.create_text(
-        canvas.winfo_width()/2,
-        canvas.winfo_height()/2 + 40,
-        font=('consolas', 25),
-        text=f"Your Score: {score}",
-        fill="white",
-        tag="score",
-    )
-
-    # If the score exceeds max_score, update max_score and save it
+    # Check if the score exceeds max_score and update if necessary
     if score > max_score:
         max_score = score
         save_max_score(max_score)
-        start_confetti()  # Start the confetti effect
     
-    # Display the final maximum score
+    window.after(2000, display_scores)  # Display scores after 2 seconds
+
+def display_scores():
+    canvas.delete(ALL)  # Clear the canvas
+
+    # Display your score
     canvas.create_text(
         canvas.winfo_width()/2,
-        canvas.winfo_height()/2 + 5,
+        canvas.winfo_height()/2 - 30,
+        font=('consolas', 25),
+        text=f"Your Score: {score}",
+        fill="white",
+        tag="your_score",
+    )
+
+    # Display maximum score
+    canvas.create_text(
+        canvas.winfo_width()/2,
+        canvas.winfo_height()/2 + 30,
         font=('consolas', 25),
         text=f"Maximum Score: {max_score}",
         fill="white",
-        tag="score",
+        tag="max_score",
     )
 
-    label.config(text="")
-    max_score_label.config(text="")
+    # Check if the player has achieved or exceeded the maximum score
+    if score >= max_score:
+        # Display congratulations message
+        canvas.create_text(
+            canvas.winfo_width()/2,
+            canvas.winfo_height()/2 + 120,
+            font=('consolas', 20),
+            text="Congratulations on setting \n a new high score!",
+            fill="#bcd70c",
+            tag="congratulations"
+        )
 
-    if score == max_score and max_score != 0:
-        window.after(500, show_congratulations)
+        # Trigger confetti effect
+        confetti = Confetti()
+        confetti.fall()
 
-# Function to start the confetti effect
-def start_confetti():
-    confetti = Confetti()  # Create confetti instance
-    confetti.fall()  # Start the falling effect
-
-# Function to show congratulations message after game over
-def show_congratulations():
-    canvas.create_text(
-        canvas.winfo_width()/2,
-        canvas.winfo_height()/2 + 100,
-        font=('consolas', 17),
-        text="Congratulations on setting a \n new high score!",
-        anchor='center', 
-        fill="#75ab22",
-        tag="congratulations"
-    )
-
-# Function to generate random colors for the confetti effect
 def random_color():
     return "#%06x" % random.randint(0, 0xFFFFFF)
-
 # Function to draw a single eye on the snake's head
 def draw_eye(x, y, direction):
     canvas.delete("eye")
