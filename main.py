@@ -6,7 +6,6 @@ from PIL import Image, ImageTk
 # Initializing screen dimensions, speed, snake size, and colors
 WIDTH = 500
 HEIGHT = 500
-SPEED = 200
 SPACE_SIZE = 20
 BODY_SIZE = 2
 SNAKE = "#75ab22"
@@ -14,6 +13,9 @@ FOOD = "#fc5d18"
 BACKGROUND = "#010103"
 EYE_COLOR = "#000000"
 SCORE_FILE = "max_score.txt"  # File to store the maximum score
+
+# Default speed (in milliseconds)
+SPEED = 200  # Will be updated based on difficulty selection
 
 # Function to load the maximum score from a file
 def load_max_score():
@@ -172,7 +174,7 @@ def display_scores():
     # Display your score
     canvas.create_text(
         canvas.winfo_width()/2,
-        canvas.winfo_height()/2 - 30,
+        canvas.winfo_height()/2 - 90,
         font=('consolas', 25),
         text=f"Your Score: {score}",
         fill="white",
@@ -182,7 +184,7 @@ def display_scores():
     # Display maximum score
     canvas.create_text(
         canvas.winfo_width()/2,
-        canvas.winfo_height()/2 + 30,
+        canvas.winfo_height()/2 - 30,
         font=('consolas', 25),
         text=f"Maximum Score: {max_score}",
         fill="white",
@@ -190,11 +192,11 @@ def display_scores():
     )
 
     # Check if the player has achieved or exceeded the maximum score
-    if score >= max_score:
+    if score >= max_score and max_score!=0:
         # Display congratulations message
         canvas.create_text(
             canvas.winfo_width()/2,
-            canvas.winfo_height()/2 + 120,
+            canvas.winfo_height()/2 -220,
             font=('consolas', 20),
             text="Congratulations on setting \n a new high score!",
             fill="#bcd70c",
@@ -204,9 +206,10 @@ def display_scores():
         # Trigger confetti effect 
         confetti = Confetti()
         confetti.fall()
- # Add a "Play Again" button
+
+    # Add a "Play Again" button
     play_again_button = Button(window, text="Play Again", font=('consolas', 20), command=restart_game)
-    play_again_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 200, window=play_again_button)
+    play_again_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 120, window=play_again_button)
 
 # Function to restart the game
 def restart_game():
@@ -215,8 +218,10 @@ def restart_game():
     label.config(text="Points: {}".format(score))
     canvas.delete(ALL)  # Clear the canvas
     show_get_ready_screen()  # Show the "Get Ready" screen
+
 def random_color():
     return "#%06x" % random.randint(0, 0xFFFFFF)
+
 # Function to draw a single eye on the snake's head
 def draw_eye(x, y, direction):
     canvas.delete("eye")
@@ -239,84 +244,121 @@ def draw_eye(x, y, direction):
 def show_get_ready_screen():
     canvas.delete(ALL)  # Clear the canvas
 
-    # Display "Get Ready" text
+    # Display the "Get Ready" text
     canvas.create_text(
-        canvas.winfo_width()/2 -5,
-        canvas.winfo_height()/2 + 70,
+        canvas.winfo_width()/2,
+        canvas.winfo_height()/2 - 200,
         font=('consolas', 50),
         text="Get Ready",
-        fill="#bcd70c",
+        fill="#75ab22",
         tag="get_ready"
     )
 
-    # Load the logo image using Pillow, resize it, and convert it to Tkinter format
+    # Load and display the logo
     original_logo = Image.open("snakelogo.png")
-    resized_logo = original_logo.resize((120, 120))  # Resize the image to 100x100 pixels
-    logo_image = ImageTk.PhotoImage(resized_logo)
+    resized_logo = original_logo.resize((200, 200))
+    logo = ImageTk.PhotoImage(resized_logo)
 
-    # Display the resized logo image
-    canvas.create_image(
+    # Display the logo at the center of the canvas
+    canvas.create_image(canvas.winfo_width()/2, canvas.winfo_height()/2 - 90, image=logo)
+
+    # Keep a reference to the logo image
+    canvas.logo_image = logo
+
+    # Add a "Start Game" button below the "Get Ready" text
+    start_button = Button(window, text="Start Game", font=('consolas', 20), command=start_game)
+    start_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 10, window=start_button)
+
+    canvas.create_text(
         canvas.winfo_width()/2,
-        canvas.winfo_height()/2,
-        image=logo_image,
-        anchor=CENTER,
-        tag="logo_image"
+        canvas.winfo_height()/2 + 100,
+        font=('consolas', 20),
+        text="Difficulty Level",
+        fill="#75ab22",
+        tag="difficulty_level"
     )
 
-    # Keep the image reference to avoid garbage collection
-    canvas.image = logo_image
-    window.after(2000, start_game)
+    difficulty = StringVar(window)
+    difficulty.set("Medium")  # Default selection
 
-# Function to start the game screen after "Get Ready"
+    difficulty_dropdown = OptionMenu(window, difficulty, "Easy", "Medium", "Hard")
+    difficulty_dropdown.config(font=('consolas', 15))
+    difficulty_dropdown_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 150, window=difficulty_dropdown)
+
+    def start_game_with_difficulty():
+        global SPEED
+        difficulty_level = difficulty.get()
+
+        if difficulty_level == "Easy":
+            SPEED = 300  # Slower speed for easy mode
+        elif difficulty_level == "Medium":
+            SPEED = 200  # Default speed for medium mode
+        else:
+            SPEED = 100  # Faster speed for hard mode
+
+        start_game()
+
+    # Update the Start button command to include difficulty selection
+    start_button.config(command=start_game_with_difficulty)
+
 def start_game():
-    canvas.delete("get_ready")  # Remove the "Get Ready" message
-    global snake, food, score, max_score, direction
+    global snake, food, direction, score, max_score
+
+    # Load the max score from the file
+    max_score = load_max_score()
+
+    direction = 'down'
     score = 0
-    direction = "down"
+
+    label.config(text="Points: {}".format(score))
+    max_score_label.config(text="Max Score: {}".format(max_score))
+
+    canvas.delete(ALL)
+
     snake = Snake()
     food = Food()
+
     next_turn(snake, food)
-    # Function to restart the game
 
+# Function to resize the canvas based on the window size
+def resize_canvas(event):
+    global WIDTH, HEIGHT
+    WIDTH, HEIGHT = event.width, event.height
+    canvas.config(width=WIDTH, height=HEIGHT)
 
-# Main Game Setup
+# Main Window Initialization
 window = Tk()
 window.title("Snake Game")
-window.resizable(False, False)
 
-score = 0
-max_score = load_max_score()
+score = 0  # Initialize score
+max_score = load_max_score()  # Load the maximum score
 
-direction = 'down'
-
-label = Label(window, text="Points: {}".format(score), font=('consolas', 15))
+label = Label(window, text="Points: {}".format(score), font=('consolas', 20))
 label.pack()
 
-max_score_label = Label(window, text="Max Score: {}".format(max_score), font=('consolas', 15))
+max_score_label = Label(window, text="Max Score: {}".format(max_score), font=('consolas', 20))
 max_score_label.pack()
 
 canvas = Canvas(window, bg=BACKGROUND, height=HEIGHT, width=WIDTH)
-canvas.pack()
+canvas.pack(fill=BOTH, expand=True)
+
+# Bind the window resize event to adjust canvas size
+canvas.bind("<Configure>", resize_canvas)
 
 window.update()
 
-window_width = window.winfo_width()
-window_height = window.winfo_height()
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
+# Center the game window on the screen
+x = (window.winfo_screenwidth() // 2) - (WIDTH // 2)
+y = (window.winfo_screenheight() // 2) - (HEIGHT // 2)
+window.geometry(f"{WIDTH}x{HEIGHT+50}+{x}+{y}")
 
-x = int((screen_width/2) - (window_width/2))
-y = int((screen_height/2) - (window_height/2))
+# Display the "Get Ready" screen with difficulty selection
+show_get_ready_screen()
 
-window.geometry(f"{window_width}x{window_height}+{x}+{y}")
-
+# Bind the arrow keys to change direction
 window.bind('<Left>', lambda event: change_direction('left'))
 window.bind('<Right>', lambda event: change_direction('right'))
 window.bind('<Up>', lambda event: change_direction('up'))
 window.bind('<Down>', lambda event: change_direction('down'))
 
-# Show the "Get Ready" screen when the game starts
-show_get_ready_screen()
-
-
-window.mainloop()
+window.mainloop()             
