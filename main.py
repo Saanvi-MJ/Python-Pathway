@@ -4,8 +4,8 @@ import os
 from PIL import Image, ImageTk
 
 # Initializing screen dimensions, speed, snake size, and colors
-WIDTH = 800
-HEIGHT = 600
+WIDTH = 100
+HEIGHT = 100
 SPACE_SIZE = 20
 BODY_SIZE = 3
 SNAKE = "#75ab22"
@@ -218,7 +218,7 @@ def restart_game():
     label.config(text="Points: {}".format(score))
     canvas.delete(ALL)  # Clear the canvas
     show_get_ready_screen()  # Show the "Get Ready" screen
-
+    
 def random_color():
     return "#%06x" % random.randint(0, 0xFFFFFF)
 
@@ -240,6 +240,7 @@ def draw_eye(x, y, direction):
 
     canvas.create_oval(eye_x1, eye_y1, eye_x1 + eye_size, eye_y1 + eye_size, fill=EYE_COLOR, tag="eye")
 
+# Function to display a separate "Get Ready" screen
 # Function to display a separate "Get Ready" screen
 def show_get_ready_screen():
     canvas.delete(ALL)  # Clear the canvas
@@ -266,8 +267,12 @@ def show_get_ready_screen():
     canvas.logo_image = logo
 
     # Add a "Start Game" button below the "Get Ready" text
-    start_button = Button(window, text="Start Game", font=('consolas', 20),bg="#75ab22", fg="white", command=start_game)
-    start_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 10, window=start_button)
+    start_button = Button(window, text="Start Game", font=('consolas', 20), bg="#75ab22", fg="white", command=start_game)
+    start_button_window = canvas.create_window(canvas.winfo_width()/2 - 120, canvas.winfo_height()/2 + 10, window=start_button)
+
+    # Add a "Leaderboard" button beside the "Start Game" button
+    leaderboard_button = Button(window, text="Leaderboard", font=('consolas', 20), bg="#0193e9", fg="white", command=show_leaderboard)
+    leaderboard_button_window = canvas.create_window(canvas.winfo_width()/2 + 130, canvas.winfo_height()/2 + 10, window=leaderboard_button)
 
     canvas.create_text(
         canvas.winfo_width()/2,
@@ -282,7 +287,7 @@ def show_get_ready_screen():
     difficulty.set("Medium")  # Default selection
 
     difficulty_dropdown = OptionMenu(window, difficulty, "Easy", "Medium", "Hard")
-    difficulty_dropdown.config(font=('consolas', 15))
+    difficulty_dropdown.config(font=('consolas', 15), bg="#0193e9", fg="white")  # Set background and foreground colors
     difficulty_dropdown_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 150, window=difficulty_dropdown)
 
     def start_game_with_difficulty():
@@ -300,6 +305,25 @@ def show_get_ready_screen():
 
     # Update the Start button command to include difficulty selection
     start_button.config(command=start_game_with_difficulty)
+
+# Function to show the leaderboard
+def show_leaderboard():
+    canvas.delete(ALL)
+    
+    # Display leaderboard message
+    canvas.create_text(
+        canvas.winfo_width()/2,
+        canvas.winfo_height()/2 - 50,
+        font=('consolas', 50),
+        text="Leaderboard Coming Soon!",
+        fill="#0193e9",
+        tag="leaderboard"
+    )
+
+    # Add a "Back" button to return to the initial screen
+    back_button = Button(window, text="Back", font=('consolas', 20), bg="#fc5d18", fg="white", command=show_get_ready_screen)
+    back_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 50, window=back_button)
+
 
 def start_game():
     global snake, food, direction, score, max_score
