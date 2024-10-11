@@ -4,10 +4,10 @@ import os
 from PIL import Image, ImageTk
 
 # Initializing screen dimensions, speed, snake size, and colors
-WIDTH = 500
-HEIGHT = 500
+WIDTH = 800
+HEIGHT = 600
 SPACE_SIZE = 20
-BODY_SIZE = 2
+BODY_SIZE = 3
 SNAKE = "#75ab22"
 FOOD = "#fc5d18"
 BACKGROUND = "#010103"
@@ -177,7 +177,7 @@ def display_scores():
         canvas.winfo_height()/2 - 90,
         font=('consolas', 25),
         text=f"Your Score: {score}",
-        fill="white",
+        fill="#0193e9",
         tag="your_score",
     )
 
@@ -187,7 +187,7 @@ def display_scores():
         canvas.winfo_height()/2 - 30,
         font=('consolas', 25),
         text=f"Maximum Score: {max_score}",
-        fill="white",
+        fill="#0193e9",
         tag="max_score",
     )
 
@@ -199,7 +199,7 @@ def display_scores():
             canvas.winfo_height()/2 -220,
             font=('consolas', 20),
             text="Congratulations on setting \n a new high score!",
-            fill="#bcd70c",
+            fill="#75ab22",
             tag="congratulations"
         )
 
@@ -249,8 +249,8 @@ def show_get_ready_screen():
         canvas.winfo_width()/2,
         canvas.winfo_height()/2 - 200,
         font=('consolas', 50),
-        text="Get Ready",
-        fill="#75ab22",
+        text="Python Pathway",
+        fill="#fc5d18",
         tag="get_ready"
     )
 
@@ -274,7 +274,7 @@ def show_get_ready_screen():
         canvas.winfo_height()/2 + 100,
         font=('consolas', 20),
         text="Difficulty Level",
-        fill="#75ab22",
+        fill="#0193e9",
         tag="difficulty_level"
     )
 
@@ -333,10 +333,10 @@ window.title("Snake Game")
 score = 0  # Initialize score
 max_score = load_max_score()  # Load the maximum score
 
-label = Label(window, text="Points: {}".format(score), font=('consolas', 20))
+label = Label(window, text="Points: {}".format(score), font=('consolas', 10))
 label.pack()
 
-max_score_label = Label(window, text="Max Score: {}".format(max_score), font=('consolas', 20))
+max_score_label = Label(window, text="Max Score: {}".format(max_score), font=('consolas', 10))
 max_score_label.pack()
 
 canvas = Canvas(window, bg=BACKGROUND, height=HEIGHT, width=WIDTH)
