@@ -208,7 +208,7 @@ def display_scores():
         confetti.fall()
 
     # Add a "Play Again" button
-    play_again_button = Button(window, text="Play Again", font=('consolas', 20), command=restart_game)
+    play_again_button = Button(window, text="Play Again", font=('consolas', 20),bg="#fc5d18",fg="white", command=restart_game)
     play_again_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 120, window=play_again_button)
 
 # Function to restart the game
@@ -266,7 +266,7 @@ def show_get_ready_screen():
     canvas.logo_image = logo
 
     # Add a "Start Game" button below the "Get Ready" text
-    start_button = Button(window, text="Start Game", font=('consolas', 20), command=start_game)
+    start_button = Button(window, text="Start Game", font=('consolas', 20),bg="#75ab22", fg="white", command=start_game)
     start_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 10, window=start_button)
 
     canvas.create_text(
