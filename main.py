@@ -15,7 +15,7 @@ EYE_COLOR = "#000000"
 SCORE_FILE = "max_score.txt"  # File to store the maximum score
 
 # Default speed (in milliseconds)
-SPEED = 200  # Will be updated based on difficulty selection
+SPEED = 170  # Will be updated based on difficulty selection
 
 # Function to load the maximum score from a file
 def load_max_score():
@@ -297,9 +297,9 @@ def show_get_ready_screen():
         if difficulty_level == "Easy":
             SPEED = 300  # Slower speed for easy mode
         elif difficulty_level == "Medium":
-            SPEED = 200  # Default speed for medium mode
+            SPEED = 170  # Default speed for medium mode
         else:
-            SPEED = 100  # Faster speed for hard mode
+            SPEED = 70  # Faster speed for hard mode
 
         start_game()
 
