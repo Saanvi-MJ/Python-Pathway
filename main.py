@@ -284,7 +284,7 @@ def show_get_ready_screen():
     )
 
     difficulty = StringVar(window)
-    difficulty.set("Medium")  # Default selection
+    difficulty.set("Select")  # Default selection
 
     difficulty_dropdown = OptionMenu(window, difficulty, "Easy", "Medium", "Hard")
     difficulty_dropdown.config(font=('consolas', 15), bg="#0193e9", fg="white")  # Set background and foreground colors
