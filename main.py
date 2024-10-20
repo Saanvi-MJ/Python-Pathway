@@ -14,20 +14,33 @@ BACKGROUND = "#010103"
 EYE_COLOR = "#000000"
 SCORE_FILE = "max_score.txt"  # File to store the maximum score
 
-# Default speed (in milliseconds)
-SPEED = 170  # Will be updated based on difficulty selection
+LEADERBOARD_FILE = "leaderboard.txt"  # File to store the leaderboard
+
+
 
 # Function to load the maximum score from a file
 def load_max_score():
     if os.path.exists(SCORE_FILE):
         with open(SCORE_FILE, "r") as file:
             return int(file.read().strip())
-    return 0  # Default max score if file doesn't exist
+    return 0 # Default max score if file doesn't exist
 
 # Function to save the maximum score to a file
 def save_max_score(max_score):
     with open(SCORE_FILE, "w") as file:
-        file.write(str(max_score))
+        file.write(f"{max_score}")  # Save the max score as an integer
+
+# Function to save the player name and score to the leaderboard file
+def save_to_leaderboard(player_name, score):
+    with open(LEADERBOARD_FILE, "a") as file:
+        file.write(f"{player_name}: {score}\n")
+
+# Function to load the leaderboard from the file
+def load_leaderboard():
+    if os.path.exists(LEADERBOARD_FILE):
+        with open(LEADERBOARD_FILE, "r") as file:
+            return file.readlines()
+    return []       
 
 # Creating the snake class
 class Snake:
@@ -162,19 +175,20 @@ def game_over():
     )
 
     # Check if the score exceeds max_score and update if necessary
-    if score > max_score:
+    if score > max_score and max_score!=0:
         max_score = score
-        save_max_score(max_score)
+        save_max_score(max_score)  # Save the new max score permanently
+        prompt_player_name()  # Prompt for player name when new high score is achieved
     
     window.after(2000, display_scores)  # Display scores after 2 seconds
 
+
 def display_scores():
     canvas.delete(ALL)  # Clear the canvas
-
     # Display your score
     canvas.create_text(
         canvas.winfo_width()/2,
-        canvas.winfo_height()/2 - 90,
+        canvas.winfo_height()/2 - 210,
         font=('consolas', 25),
         text=f"Your Score: {score}",
         fill="#0193e9",
@@ -184,32 +198,44 @@ def display_scores():
     # Display maximum score
     canvas.create_text(
         canvas.winfo_width()/2,
-        canvas.winfo_height()/2 - 30,
+        canvas.winfo_height()/2 - 140,
         font=('consolas', 25),
         text=f"Maximum Score: {max_score}",
         fill="#0193e9",
         tag="max_score",
     )
 
-    # Check if the player has achieved or exceeded the maximum score
-    if score >= max_score and max_score!=0:
-        # Display congratulations message
-        canvas.create_text(
-            canvas.winfo_width()/2,
-            canvas.winfo_height()/2 -220,
-            font=('consolas', 20),
-            text="Congratulations on setting \n a new high score!",
-            fill="#75ab22",
-            tag="congratulations"
-        )
+# Ask the player for their name
+    canvas.create_text(
+        canvas.winfo_width()/2,
+        canvas.winfo_height()/2 - 50,
+        font=('consolas', 25),
+        text="Hurray! New High Score. \n Enter your name:",
+        fill="#0193e9",
+        tag="prompt"
+    )
 
-        # Trigger confetti effect 
-        confetti = Confetti()
-        confetti.fall()
+    player_name_entry = Entry(window, font=('consolas', 20), bg="#010103", fg="white")
+    player_name_entry_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 40, window=player_name_entry)
 
-    # Add a "Play Again" button
+    # Trigger confetti effect 
+    confetti = Confetti()
+    confetti.fall()
+    # Function to save the player's name and display scores
+    def submit_name():
+        player_name = player_name_entry.get()
+        if player_name:
+            save_to_leaderboard(player_name, max_score)  # Save the name and score to the leaderboard
+            player_name_entry.destroy()  # Remove the entry field
+            display_scores()  # Display the scores after saving the name
+
+    # Add a submit button to confirm the name entry
+    submit_button = Button(window, text="Submit", font=('consolas', 20), bg="#75ab22", fg="white", command=submit_name)
+    submit_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 120, window=submit_button)
+
+ # Add a "Play Again" button
     play_again_button = Button(window, text="Play Again", font=('consolas', 20),bg="#fc5d18",fg="white", command=restart_game)
-    play_again_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 120, window=play_again_button)
+    play_again_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 190, window=play_again_button)
 
 # Function to restart the game
 def restart_game():
@@ -241,9 +267,8 @@ def draw_eye(x, y, direction):
     canvas.create_oval(eye_x1, eye_y1, eye_x1 + eye_size, eye_y1 + eye_size, fill=EYE_COLOR, tag="eye")
 
 # Function to display a separate "Get Ready" screen
-# Function to display a separate "Get Ready" screen
 def show_get_ready_screen():
-    canvas.delete(ALL)  # Clear the canvas
+    canvas.delete(ALL)  
 
     # Display the "Get Ready" text
     canvas.create_text(
@@ -306,29 +331,37 @@ def show_get_ready_screen():
     # Update the Start button command to include difficulty selection
     start_button.config(command=start_game_with_difficulty)
 
+
 # Function to show the leaderboard
 def show_leaderboard():
     canvas.delete(ALL)
     
     # Display leaderboard message
+    leaderboard_data = load_leaderboard()
+
+    if leaderboard_data:
+        leaderboard_text = "Leaderboard:\n" + "".join(leaderboard_data)
+    else:
+        leaderboard_text = "No leaderboard data available."
+
     canvas.create_text(
-        canvas.winfo_width()/2,
-        canvas.winfo_height()/2 - 50,
-        font=('consolas', 50),
-        text="Leaderboard Coming Soon!",
-        fill="#0193e9",
+        canvas.winfo_width()/2 -30,
+        canvas.winfo_height()/2 - 20,
+        font=('consolas', 25),
+        text=leaderboard_text,
+        fill="#75ab22",
         tag="leaderboard"
     )
 
-    # Add a "Back" button to return to the initial screen
-    back_button = Button(window, text="Back", font=('consolas', 20), bg="#fc5d18", fg="white", command=show_get_ready_screen)
-    back_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 50, window=back_button)
+    # Add a "Back" button to return to the menu
+    back_button = Button(window, text="Back", font=('consolas', 20), bg="#fc5d18", fg="white", command=restart_game)
+    back_button_window = canvas.create_window(canvas.winfo_width()/2, canvas.winfo_height()/2 + 120, window=back_button)
 
 
 def start_game():
     global snake, food, direction, score, max_score
 
-    # Load the max score from the file
+    # Load the max score from the file at the start of the game
     max_score = load_max_score()
 
     direction = 'down'
